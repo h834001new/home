@@ -1,0 +1,551 @@
+﻿<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<link rel="apple-touch-icon" type="image/png" href="https://static.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+<meta name="apple-mobile-web-app-title" content="CodePen">
+<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
+<title>CodePen - Carousel</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: system-ui;
+  background:grey;
+}
+
+.visuallyhidden {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  opacity: 0;
+
+}
+
+h1 {
+  color: white;
+  text-align: center;
+  margin-top: 1em;
+}
+
+.container {
+  overflow: hidden;
+  padding: 20px;
+  margin-top: 1em;
+  background: rgba(0,0,0,.1)
+}
+
+.card-carousel {
+  --card-width: 80%;
+  --card-max-width: 280px;
+  --card-height: 550px;
+  --carousel-min-width: 600px;
+  z-index: 1;
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  height: var(--card-height);
+  min-width: var(--carousel-min-width);
+  transition: filter .3s ease;
+}
+
+@media screen and (max-width: 640px) {
+  .card-carousel {
+    margin-left: calc((100vw - var(--carousel-min-width) - 40px) / 2)
+  }
+}
+
+.card-carousel.smooth-return {
+  transition: all .2s ease;
+}
+h3{
+ position: static;
+  color: white;
+}
+
+
+.card-carousel .card {
+  background: black;
+  width: var(--card-width);
+  max-width: var(--card-max-width);
+  text-align: center;
+  padding: 1em;
+  min-width: 250px;
+  height: var(--card-height);
+  position: absolute;
+  margin: 0 auto;
+  color: rgba(0,0,0,.5);
+  transition: inherit;
+  -webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.3);
+  border-radius: 1em;
+  filter: brightness(.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  position: relative;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}ss
+.card.highlight {
+  filter: brightness(1)
+}
+
+/* {% for i in geodata.articles %}
+.card:nth-of-type({{ forloop.counter }}) .image-container {
+    background-image: url({{ i.urlToImage }});
+}
+{% endfor %} */
+
+
+
+
+.image-container {
+  position: absolute;
+  width: 100%;
+  height: 10em;
+  top:0em;
+  background-size: cover;
+  margin-bottom: 10em;
+  border-radius: 0;
+  padding: 2em;
+  -webkit-box-shadow: inset 0px 0px 17px 0px rgba(0,0,0,0.3);
+-moz-box-shadow: inset 0px 0px 17px 0px rgba(0,0,0,0.3);
+box-shadow: inset 0px 0px 17px 0px rgba(0,0,0,0.3);
+
+}
+
+
+
+.image-container::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: solid 3px rgba(0,0,0,.1);
+  border-radius: 0;
+  position: absolute;
+  top: -3px;
+  left: -3px;
+}
+</style>
+<script>
+  window.console = window.console || function(t) {};
+</script>
+<script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+</head>
+<body translate="no" ng-app="myapp" ng-controller="ctrl">
+<h1>Drag the cards to move them</h1>
+<div class="container">
+<div class="card-carousel" >
+    
+<div class="card" id="{{ $index }}" ng-repeat="post in records">
+  <style type="text/css">
+  .card:nth-of-type({{ $index }}) .image-container {
+  background-image: url({{ post.urlToImage }});
+}
+  </style>
+<div class="image-container" >
+  
+</div>
+<h3>{{post.title}}
+<hr>
+<i>{{ post.description}}</i></h3>
+<button class="button" type="submit" style="position: absolute; bottom: 0em;"><a ng-href="http://google.com">More detail</a></button>
+
+</div>
+  <div ng-include="'google'"> </div>
+</div>
+<a href="#" class="visuallyhidden card-controller">Carousel controller</a>
+</div>
+<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
+<script>
+  function carouselInt() {
+      const cardsContainer = document.querySelector(".card-carousel");
+      const cardsController = document.querySelector(".card-carousel + .card-controller");
+      const carousel = new CardCarousel(cardsContainer);
+  }
+</script>
+<script src="static/JavaScript.js"></script>
+<script id="rendered-js">
+
+class DraggingEvent {
+  constructor(target = undefined) {
+    this.target = target;
+  }
+
+  event(callback) {
+    let handler;
+
+    this.target.addEventListener("mousedown", e => {
+      e.preventDefault();
+
+      handler = callback(e);
+
+      window.addEventListener("mousemove", handler);
+
+      document.addEventListener("mouseleave", clearDraggingEvent);
+
+      window.addEventListener("mouseup", clearDraggingEvent);
+
+      function clearDraggingEvent() {
+        window.removeEventListener("mousemove", handler);
+        window.removeEventListener("mouseup", clearDraggingEvent);
+
+        document.removeEventListener("mouseleave", clearDraggingEvent);
+
+        handler(null);
+      }
+    });
+
+    this.target.addEventListener("touchstart", e => {
+      handler = callback(e);
+
+      window.addEventListener("touchmove", handler);
+
+      window.addEventListener("touchend", clearDraggingEvent);
+
+      document.body.addEventListener("mouseleave", clearDraggingEvent);
+
+      function clearDraggingEvent() {
+        window.removeEventListener("touchmove", handler);
+        window.removeEventListener("touchend", clearDraggingEvent);
+
+        handler(null);
+      }
+    });
+  }
+
+  // Get the distance that the user has dragged
+  getDistance(callback) {
+    function distanceInit(e1) {
+      let startingX, startingY;
+
+      if ("touches" in e1) {
+        startingX = e1.touches[0].clientX;
+        startingY = e1.touches[0].clientY;
+      } else {
+        startingX = e1.clientX;
+        startingY = e1.clientY;
+      }
+
+
+      return function (e2) {
+        if (e2 === null) {
+          return callback(null);
+        } else {
+
+          if ("touches" in e2) {
+            return callback({
+              x: e2.touches[0].clientX - startingX,
+              y: e2.touches[0].clientY - startingY });
+
+          } else {
+            return callback({
+              x: e2.clientX - startingX,
+              y: e2.clientY - startingY });
+
+          }
+        }
+      };
+    }
+
+    this.event(distanceInit);
+  }}
+
+
+
+class CardCarousel extends DraggingEvent {
+  constructor(container, controller = undefined) {
+    super(container);
+
+    // DOM elements
+    this.container = container;
+    this.controllerElement = controller;
+    this.cards = container.querySelectorAll(".card");
+
+    // Carousel data
+
+    this.centerIndex = (this.cards.length) / 2;
+    this.cardWidth = this.cards[0].offsetWidth / this.container.offsetWidth * 100;
+    this.xScale = {};
+
+    // Resizing
+    window.addEventListener("resize", this.updateCardWidth.bind(this));
+
+    if (this.controllerElement) {
+      this.controllerElement.addEventListener("keydown", this.controller.bind(this));
+    }
+
+
+    // Initializers
+    this.build();
+
+    // Bind dragging event
+    super.getDistance(this.moveCards.bind(this));
+  }
+
+  updateCardWidth() {
+    this.cardWidth = this.cards[0].offsetWidth / this.container.offsetWidth * 100;
+
+    this.build();
+  }
+
+  build(fix = 0) {
+    for (let i = 0; i < this.cards.length; i++) {if (window.CP.shouldStopExecution(0)) break;
+      const x = i - this.centerIndex;
+      const scale = this.calcScale(x);
+      const scale2 = this.calcScale2(x);
+      const zIndex = -Math.abs(i - this.centerIndex);
+
+      const leftPos = this.calcPos(x, scale2);
+
+
+      this.xScale[x] = this.cards[i];
+
+      this.updateCards(this.cards[i], {
+        x: x,
+        scale: scale,
+        leftPos: leftPos,
+        zIndex: zIndex });
+
+    }window.CP.exitedLoop(0);
+  }
+
+
+  controller(e) {
+    const temp = { ...this.xScale };
+
+    if (e.keyCode === 39) {
+      // Left arrow
+      for (let x in this.xScale) {
+        const newX = parseInt(x) - 1 < -this.centerIndex ? this.centerIndex : parseInt(x) - 1;
+
+        temp[newX] = this.xScale[x];
+      }
+    }
+
+    if (e.keyCode == 37) {
+      // Right arrow
+      for (let x in this.xScale) {
+        const newX = parseInt(x) + 1 > this.centerIndex ? -this.centerIndex : parseInt(x) + 1;
+
+        temp[newX] = this.xScale[x];
+      }
+    }
+
+    this.xScale = temp;
+
+    for (let x in temp) {
+      const scale = this.calcScale(x),
+      scale2 = this.calcScale2(x),
+      leftPos = this.calcPos(x, scale2),
+      zIndex = -Math.abs(x);
+
+      this.updateCards(this.xScale[x], {
+        x: x,
+        scale: scale,
+        leftPos: leftPos,
+        zIndex: zIndex });
+
+    }
+  }
+
+  calcPos(x, scale) {
+    let formula;
+    if (x < 0) {
+      formula = (scale * 100 - this.cardWidth) / 2;
+
+      return formula;
+
+    } else if (x > 0) {
+      formula = 100 - (scale * 100 + this.cardWidth) / 2;
+
+      return formula;
+    } else {
+      formula = 100 - (scale * 100 + this.cardWidth) / 2;
+
+      return formula;
+    }
+  }
+
+  updateCards(card, data) {
+   
+   
+    if (data.x || data.x == 0) {
+      card.setAttribute("data-x", data.x);
+    }
+
+    if (data.scale || data.scale == 0) {
+      card.style.transform = `scale(${data.scale})`;
+
+      if (data.scale == 0) {
+        card.style.opacity = data.scale;
+      } else {
+        card.style.opacity = 1;
+      }
+    }
+
+    if (data.leftPos) {
+      card.style.left = `${data.leftPos}%`;
+    }
+
+    if (data.zIndex || data.zIndex == 0) {
+      if (data.zIndex == 0) {
+        card.classList.add("highlight");
+      } else {
+        card.classList.remove("highlight");
+      }
+
+      card.style.zIndex = data.zIndex;
+    }
+  }
+
+  calcScale2(x) {
+    let formula;
+
+    if (x <= 0) {
+      formula = 1 - -1 / 5 * x;
+
+      return formula;
+    } else if (x > 0) {
+      formula = 1 - 1 / 5 * x;
+      return formula;
+
+    }
+  }
+
+  calcScale(x) {
+    const formula = 1 - 1 / 5 * Math.pow(x, 2);
+
+    if (formula <= 0) {
+      return 0;
+    } else {
+      return formula;
+    }
+  }
+
+  checkOrdering(card, x, xDist) {
+    const original = parseInt(card.dataset.x);
+    const rounded = Math.round(xDist);
+    let newX = x;
+
+    if (x !== x + rounded) {
+      if (x + rounded > original) {
+        if (x + rounded > this.centerIndex) {
+
+          newX = x + rounded - 1 - this.centerIndex - rounded + -this.centerIndex;
+        }
+      } else if (x + rounded < original) {
+        if (x + rounded < -this.centerIndex) {
+
+          newX = x + rounded + 1 + this.centerIndex - rounded + this.centerIndex;
+        }
+      }
+
+      this.xScale[newX + rounded] = card;
+    }
+
+    const temp = -Math.abs(newX + rounded);
+
+    this.updateCards(card, { zIndex: temp });
+
+    return newX;
+  }
+
+  moveCards(data) {
+    let xDist;
+
+    if (data != null) {
+      this.container.classList.remove("smooth-return");
+      xDist = data.x / 250;
+    } else {
+
+
+      this.container.classList.add("smooth-return");
+      xDist = 0;
+
+      for (let x in this.xScale) {
+        this.updateCards(this.xScale[x], {
+          x: x,
+          zIndex: Math.abs(Math.abs(x) - this.centerIndex) });
+
+      }
+    }
+
+    for (let i = 1; i < this.cards.length; i++) {if (window.CP.shouldStopExecution(1)) break;
+      const x = this.checkOrdering(this.cards[i], parseInt(this.cards[i].dataset.x), xDist),
+      scale = this.calcScale(x + xDist),
+      scale2 = this.calcScale2(x + xDist),
+      leftPos = this.calcPos(x + xDist, scale2);
+
+
+      this.updateCards(this.cards[i], {
+        scale: scale,
+        leftPos: leftPos });
+
+    }window.CP.exitedLoop(1);
+  }}
+
+
+const carousel = new CardCarousel(cardsContainer);
+//# sourceURL=pen.js
+    </script>
+</body>
+</html>
