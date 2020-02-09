@@ -1,262 +1,138 @@
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
     <link rel="apple-touch-icon" type="image/png" href="https://static.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
     <meta name="apple-mobile-web-app-title" content="CodePen">
     <link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
     <link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
-    <title>CodePen - Tinder-like Card Swipe Interaction</title>
+    <title>CodePen - Cards with overflowing images</title>
+    <link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700" rel="stylesheet">
+    <script src="scripts/angular.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <script src="scripts/cutom.js"></script>
     <style>
-        *, *:before, *:after {
+        * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         html, body {
-            font-size: 100%;
+            height: 100%;
         }
 
         body {
-            background: #63BDF7;
-            overflow: hidden;
+            background: grey;
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            flex-direction: column;
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
         }
 
-        .demo {
-            position: absolute;
-            width: 100%;
+        .wrap {
             height: 100%;
-            background: #F6F6F5;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
         }
 
-        .demo__header {
-            height: 6rem;
-            background: #002942;
+        .card {
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-flex: 0;
+            flex: 0 0 auto;
+            background: #fff;
+            max-width: 850px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
         }
 
-        .demo__content {
-
-            background-color: black;
-            overflow: hidden;
+        .card-pic-wrap {
+            border-radius: 5px 0 0 5px;
+            width: 300px;
+            height:600px;
+            -webkit-box-flex: 0;
+            flex: 0 0 auto;
             position: relative;
-            height: 100%;
-            padding-top: 0;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            background: white;
         }
 
-        .demo__card-cont {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            margin: 0 auto 5rem;
+            .card-pic-wrap img {
+                height:500px;
+                position: absolute;
+                bottom: 3em;
+                left: 50%;
+                margin-left: -135px;
+                width: 350px;
+                -webkit-box-reflect: below -1px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(90%, transparent), to(rgba(250, 250, 250, 0.15)));
+            }
+
+        .card-content {
+            padding: 3em 4em 2em;
         }
 
-        .demo__card {
-            background-color: black;
-            z-index: 2;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-transform-origin: 50% 100%;
-            transform-origin: 50% 100%;
-        }
-
-            .demo__card.reset {
-                transition: -webkit-transform 0.3s;
-                transition: transform 0.3s;
-                transition: transform 0.3s, -webkit-transform 0.3s;
-                -webkit-transform: translateX(0) !important;
-                transform: translateX(0) !important;
-            }
-
-                .demo__card.reset .demo__card__choice {
-                    transition: opacity 0.3s;
-                    opacity: 0 !important;
-                }
-
-            .demo__card.inactive {
-                transition: -webkit-transform 0.3s;
-                transition: transform 0.3s;
-                transition: transform 0.3s, -webkit-transform 0.3s;
-            }
-
-            .demo__card.to-left {
-                -webkit-transform: translateX(-30rem) rotate(-30deg) !important;
-                transform: translateX(-30rem) rotate(-30deg) !important;
-            }
-
-            .demo__card.to-right {
-                -webkit-transform: translate(30rem) rotate(30deg) !important;
-                transform: translate(30rem) rotate(30deg) !important;
-            }
-
-            .demo__card.below {
-                z-index: 1;
-            }
-
-        .demo__card__top {
-            height: auto;
-            width: auto;
-            padding-top: 4rem;
-        }
-
-            .demo__card__top.purple {
-                background: #7132B9;
-            }
-
-            .demo__card__top.blue {
-                background: #248CB6;
-            }
-
-            .demo__card__top.indigo {
-                background: #303F9F;
-            }
-
-            .demo__card__top.cyan {
-                background: #26C6DA;
-            }
-
-            .demo__card__top.lime {
-                background: #AFB42B;
-            }
-
-            .demo__card__top.brown {
-                background: #795548;
-            }
-
-            .myButton {
-                width: 300px;
-                height: 100px;
-	background-color:#44c767;
-	border-radius:28px;
-	border:1px solid #18ab29;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:80px;
-	padding:16px 31px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #2f6627;
-}
-.myButton:hover {
-	background-color:#5cbf2a;
-}
-.myButton:active {
-	position:relative;
-	top:1px;
-}
-
-     
-
-        .demo__card__name {
-            font-size: 60px;
-            text-align: center;
+        h3 {
+            font-family: 'PT Serif', serif;
             font-weight: bold;
+            font-size: 3em;
+            margin: 0 0 1em;
+        }
+
+        a {
+            background: #8dc26f;
             color: #fff;
+            padding: 0 25px;
+            height: 50px;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+            line-height: 50px;
+            display: inline-block;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-top: 1.5em;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        .demo__card__btm {
-            background: black;
-            color: white;
-            font-size: 20px;
-            padding-left: 15px;
-            padding-right: 15px;
-            height: 100%;
-           
-        }
-
-        .demo__card__we {
-            background: black;
-            text-align: center;
-            font-size: 50px;
-            line-height: 11.5rem;
-        }
-
-        .demo__card__choice {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-        }
-
-            .demo__card__choice:before {
-                content: "";
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                width: 2rem;
-                height: 2rem;
-                margin-left: -1rem;
-                color: #fff;
-                border-radius: 50%;
-                box-shadow: -2rem -3rem #fff, 2rem -3rem #fff;
+            a:hover {
+                background: #70a751;
             }
 
-            .demo__card__choice:after {
-                content: "";
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                width: 4rem;
-                height: 1.5rem;
-                margin-left: -2rem;
-                border: 0.6rem solid #fff;
-                border-bottom: none;
-                border-top-left-radius: 1.5rem;
-                border-top-right-radius: 1.5rem;
+        @media (max-width: 790px) {
+            body {
+                overflow-x: hidden;
             }
 
-            .demo__card__choice.m--reject {
-                background: #FF945A;
+            .wrap {
+                margin-left: 20px;
+                margin-right: 20px;
             }
 
-            .demo__card__choice.m--like {
-                background: #B1DA96;
+            .card {
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                flex-direction: column;
+                margin-top: 5px;
+                margin-bottom: 10px;
             }
 
-                .demo__card__choice.m--like:after {
-                    -webkit-transform: scaleY(-1);
-                    transform: scaleY(-1);
+            .card-pic-wrap {
+                width: 100%;
+                border-radius: 5px 5px 0 0;
+            }
+
+                .card-pic-wrap img {
+                    bottom: 20px;
+                    position: relative;
                 }
 
-        .demo__card__drag {
-            z-index: 5;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            cursor: -webkit-grab;
-            cursor: grab;
-        }
-        .demo__card__img {
-              overflow: hidden;
-              width: 100%;
-              height:auto;
-              margin: 0 auto;
-             background-size: 100%;
-              border: 0.5rem solid #ffffff;
-              background-size: cover;
-          }
-
-          /* @media only screen and (min-device-width: 400px) {
-  body {
-    background-image: url('img_flowers.jpg');
-  }
-} */
-        .demo__tip {
-            text-align: center;
-            font-size: 2.2rem;
+            .card-content {
+                padding: 2em 2em 1em;
+            }
         }
     </style>
     <script>
@@ -269,124 +145,37 @@
     </script>
 </head>
 <body translate="no" ng-app="myapp" ng-controller="ctrl">
-    <div class="demo">
-        <header class="demo__header"></header>
-        <div class="demo__content">
-            <div class="demo__card-cont">
-                <div class="demo__card" ng-repeat="data in records" ng-init="length=data.length">
-                    <div class="demo__card__top brown">
-                        <h1 class="demo__card__name">{{data.title}}</h1>
 
-                        <div class="demo__card__img">
-                         <img class="demo__card__img" src={{data.urlToImage}}>
-                        </div>
-                              </div>
-                    
-                    <div class="demo__card__btm">
-                        <h1>{{data.description}}</h1>
-                        <h1 class="demo__card__we"><a href={{data.url}}><button class="myButton" type="submit">Detail</button><a/></h1>
-                    </div>
-                    <div class="demo__card__choice m--reject"></div>
-                    <div class="demo__card__choice m--like"></div>
-                    <div class="demo__card__drag"></div>
-                </div>
+    <div class="wrap">
+        <center>
+            <h3>
+                Category:-<select ng-model="cats" ng-change="myFunc()" ng-options="x for x in cat"></select>
+                
+            </h3>
+        </center>
+        <div class="card" ng-repeat="x in category[cats]">
+            <div class="card-pic-wrap">
+                <img src="data:image/png;base64,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" alt="A leafy plant">
             </div>
-            <p class="demo__tip">Swipe left or right</p>
+            <div class="card-content">
+                <h3>{{x.title}}</h3>
+                <p>Exp req:-{{x.exp}}</p>
+                <p>Degree needed:-{{x.degree}}</p>
+                <p>Location:-{{x.location}}</p>
+                <p>About comp:-{{x.about}}</p>
+                <p><a href="#0">So leafy</a></p>
+            </div>
         </div>
+        <!--<div class="card">
+        <div class="card-pic-wrap">
+            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1145795/plant-4.png" alt="Some pointy plants">
+        </div>
+        <div class="card-content">
+            <h3>Some pointy ones</h3>
+            <p>Florem ipsum sugarbush bloom red rose waxflower coneflower ginger. Saxifrage forget-me-not obedient plant.</p>
+            <p><a href="#0">I'll take 10</a></p>
+        </div>
+    </div>-->
     </div>
-    <script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-30d18ea41045577cdb11c797602d08e0b9c2fa407c8b81058b1c422053ad8041.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-    <script src="JavaScript.js"></script>
-
-    <script id="rendered-js">
-    $(document).ready(function () {
-
-        var animating = false;
-        var cardsCounter = 0;
-        var numOfCards = 10;
-            var decisionVal = 80;
-            var pullDeltaX = 0;
-            var deg = 0;
-            var $card, $cardReject, $cardLike;
-
-            function pullChange() {
-                animating = true;
-                deg = pullDeltaX / 10;
-                $card.css("transform", "translateX(" + pullDeltaX + "px) rotate(" + deg + "deg)");
-
-                var opacity = pullDeltaX / 100;
-                var rejectOpacity = opacity >= 0 ? 0 : Math.abs(opacity);
-                var likeOpacity = opacity <= 0 ? 0 : opacity;
-                $cardReject.css("opacity", rejectOpacity);
-                $cardLike.css("opacity", likeOpacity);
-            };
-
-            function release() {
-
-                if (pullDeltaX >= decisionVal) {
-                    $card.addClass("to-right");
-                } else if (pullDeltaX <= -decisionVal) {
-                    $card.addClass("to-left");
-                }
-
-                if (Math.abs(pullDeltaX) >= decisionVal) {
-                    $card.addClass("inactive");
-
-                    setTimeout(function () {
-                        $card.addClass("below").removeClass("inactive to-left to-right");
-                        cardsCounter++;
-                        if (cardsCounter === numOfCards) {
-                            cardsCounter = 0;
-                            $(".demo__card").removeClass("below");
-                        }
-                    }, 300);
-                }
-
-                if (Math.abs(pullDeltaX) < decisionVal) {
-                    $card.addClass("reset");
-                }
-
-                setTimeout(function () {
-                    $card.attr("style", "").removeClass("reset").
-                        find(".demo__card__choice").attr("style", "");
-
-                    pullDeltaX = 0;
-                    animating = false;
-                }, 300);
-            };
-
-            $(document).on("mousedown touchstart", ".demo__card:not(.inactive)", function (e) {
-                if (animating) return;
-
-                $card = $(this);
-                $cardReject = $(".demo__card__choice.m--reject", $card);
-                $cardLike = $(".demo__card__choice.m--like", $card);
-                var startX = e.pageX || e.originalEvent.touches[0].pageX;
-
-                $(document).on("mousemove touchmove", function (e) {
-                    var x = e.pageX || e.originalEvent.touches[0].pageX;
-                    pullDeltaX = x - startX;
-                    if (!pullDeltaX) return;
-                    pullChange();
-                });
-
-                $(document).on("mouseup touchend", function () {
-                    $(document).off("mousemove touchmove mouseup touchend");
-                    if (!pullDeltaX) return; // prevents from rapid click events
-                    release();
-                });
-            });
-
-        });
-//# sourceURL=pen.js
-    </script>
 </body>
 </html>
-<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
-  function carouselInt() {
-      const cardsContainer = document.querySelector(".card-carousel");
-      const cardsController = document.querySelector(".card-carousel + .card-controller");
-      const carousel = new CardCarousel(cardsContainer);
-  }
-</script>-->
